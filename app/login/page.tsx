@@ -1,6 +1,6 @@
 'use client'
 
-import { createClient } from '@/lib/superbase/client'
+import { createClient } from '@/lib/supabase/client'
 
 export default function LoginPage() {
   const supabase = createClient()
