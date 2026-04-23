@@ -23,11 +23,11 @@ interface Commit {
     }
   
     function getColor(count: number): string {
-      if (count === 0) return 'bg-gray-800'
-      if (count === 1) return 'bg-indigo-900'
-      if (count <= 3) return 'bg-indigo-700'
-      if (count <= 6) return 'bg-indigo-500'
-      return 'bg-indigo-400'
+      if (count === 0) return 'bg-transparent ring-1 ring-border/70'
+      if (count === 1) return 'bg-emerald-200 dark:bg-emerald-900'
+      if (count <= 3) return 'bg-emerald-400 dark:bg-emerald-700'
+      if (count <= 6) return 'bg-emerald-500 dark:bg-emerald-600'
+      return 'bg-emerald-600 dark:bg-emerald-500'
     }
   
     const weeks: typeof days[] = []
@@ -36,27 +36,40 @@ interface Commit {
     }
   
     return (
-      <div className="rounded-xl border border-gray-800 bg-gray-900 p-6">
-        <h2 className="text-white font-semibold mb-4">Activity — last 15 weeks</h2>
-        <div className="flex gap-1">
+      <div className="rounded-xl border border-border bg-background p-6">
+        <h2 className="text-foreground font-semibold mb-4">Activity — last 15 weeks</h2>
+        <div className="overflow-x-auto py-1">
+          <div className="mx-auto w-max rounded-lg border border-border/60 bg-foreground/[0.02] p-3">
+            <div className="flex w-max gap-1.5">
           {weeks.map((week, wi) => (
-            <div key={wi} className="flex flex-col gap-1">
+            <div key={wi} className="flex flex-col gap-1.5">
               {week.map((day) => (
                 <div
                   key={day.date}
                   title={`${day.date}: ${day.count} commits`}
-                  className={`w-3 h-3 rounded-sm ${getColor(day.count)}`}
+                  className={`h-4 w-4 rounded-[3px] ${getColor(day.count)}`}
                 />
               ))}
             </div>
           ))}
+            </div>
+          </div>
         </div>
         <div className="flex items-center gap-2 mt-3">
-          <span className="text-xs text-gray-500">Less</span>
-          {['bg-gray-800', 'bg-indigo-900', 'bg-indigo-700', 'bg-indigo-500', 'bg-indigo-400'].map((c) => (
-            <div key={c} className={`w-3 h-3 rounded-sm ${c}`} />
+          <span className="text-xs text-muted">Less</span>
+          {[
+            'bg-foreground/10',
+            'bg-emerald-200 dark:bg-emerald-900',
+            'bg-emerald-400 dark:bg-emerald-700',
+            'bg-emerald-500 dark:bg-emerald-600',
+            'bg-emerald-600 dark:bg-emerald-500',
+          ].map((c) => (
+            <div
+              key={c}
+              className={`h-4 w-4 rounded-[3px] ${c === 'bg-foreground/10' ? 'bg-transparent ring-1 ring-border/70' : c}`}
+            />
           ))}
-          <span className="text-xs text-gray-500">More</span>
+          <span className="text-xs text-muted">More</span>
         </div>
       </div>
     )

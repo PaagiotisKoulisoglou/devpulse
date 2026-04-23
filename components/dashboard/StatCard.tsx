@@ -6,11 +6,11 @@ interface StatCardProps {
   
   export default function StatCard({ label, value, sub }: StatCardProps) {
     return (
-      <div className="rounded-xl border border-gray-800 bg-gray-900 p-6">
-        <p className="text-sm text-gray-400">{label}</p>
-        <p className="mt-2 text-3xl font-bold text-white">{value}</p>
+      <div className="rounded-xl border border-border bg-background p-6">
+        <p className="text-sm text-muted">{label}</p>
+        <p className="mt-2 text-3xl font-bold text-foreground">{value}</p>
         {sub && (
-          <p className="mt-1 text-xs text-gray-500">{sub}</p>
+          <p className="mt-1 text-xs text-muted">{sub}</p>
         )}
       </div>
     )

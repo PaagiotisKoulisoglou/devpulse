@@ -1,4 +1,6 @@
+import Image from 'next/image'
 import SyncButton from '@/components/SyncButton'
+import ThemeToggle from '@/components/ThemeToggle'
 
 interface HeaderProps {
   username: string
@@ -11,10 +13,12 @@ export default function Header({ username, avatarUrl, email }: HeaderProps) {
     <div className="flex items-center justify-between mb-8">
       <div className="flex items-center gap-4">
         {avatarUrl ? (
-          <img
+          <Image
             src={avatarUrl}
             alt={username}
-            className="w-12 h-12 rounded-full ring-2 ring-gray-700"
+            width={48}
+            height={48}
+            className="rounded-full ring-2 ring-gray-700"
           />
         ) : (
           <div className="w-12 h-12 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold">
@@ -26,7 +30,10 @@ export default function Header({ username, avatarUrl, email }: HeaderProps) {
           <p className="text-gray-400 text-sm">{email}</p>
         </div>
       </div>
-      <SyncButton />
+      <div className="flex items-center gap-3">
+        <ThemeToggle />
+        <SyncButton />
+      </div>
     </div>
   )
 }

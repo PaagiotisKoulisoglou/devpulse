@@ -30,29 +30,29 @@ export default function CommitChart({ commits }: CommitChartProps) {
   })
 
   return (
-    <div className="rounded-xl border border-gray-800 bg-gray-900 p-6">
-      <h2 className="text-white font-semibold mb-6">Commits — last 30 days</h2>
+    <div className="rounded-xl border border-border bg-background p-6">
+      <h2 className="text-foreground font-semibold mb-6">Commits — last 30 days</h2>
       <ResponsiveContainer width="100%" height={180}>
         <BarChart data={data} barSize={8}>
           <XAxis
             dataKey="date"
-            tick={{ fill: '#6b7280', fontSize: 11 }}
+            tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
             tickLine={false}
             axisLine={false}
             interval={6}
           />
           <YAxis
-            tick={{ fill: '#6b7280', fontSize: 11 }}
+            tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
             tickLine={false}
             axisLine={false}
             width={24}
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: '#111827',
-              border: '1px solid #1f2937',
+              backgroundColor: 'hsl(var(--background))',
+              border: '1px solid hsl(var(--border))',
               borderRadius: '8px',
-              color: '#f9fafb',
+              color: 'hsl(var(--foreground))',
               fontSize: '12px',
             }}
             cursor={{ fill: 'rgba(99,102,241,0.1)' }}

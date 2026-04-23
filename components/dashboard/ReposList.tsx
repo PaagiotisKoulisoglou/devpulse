@@ -22,27 +22,27 @@ interface Repo {
   
   export default function ReposList({ repos }: ReposListProps) {
     return (
-      <div className="rounded-xl border border-gray-800 bg-gray-900 p-6">
-        <h2 className="text-white font-semibold mb-4">Repositories</h2>
-        <div className="flex flex-col divide-y divide-gray-800">
+      <div className="rounded-xl border border-border bg-background p-6">
+        <h2 className="text-foreground font-semibold mb-4">Repositories</h2>
+        <div className="flex flex-col divide-y divide-border">
           {repos.slice(0, 10).map((repo) => (
             <div key={repo.id} className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
               <div className="flex items-center gap-3 min-w-0">
                 {repo.language && (
                   <div
-                    className={`w-2 h-2 rounded-full flex-shrink-0 ${LANGUAGE_COLORS[repo.language] ?? 'bg-gray-500'}`}
+                    className={`w-2 h-2 rounded-full shrink-0 ${LANGUAGE_COLORS[repo.language] ?? 'bg-muted'}`}
                   />
                 )}
                 <div className="min-w-0">
-                  <p className="text-gray-300 text-sm font-medium truncate">
+                  <p className="text-foreground text-sm font-medium truncate">
                     {repo.name}
                   </p>
-                  <p className="text-gray-500 text-xs">
+                  <p className="text-muted text-xs">
                     {repo.language ?? 'Unknown'}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-1 text-gray-500 text-xs flex-shrink-0 ml-4">
+              <div className="flex items-center gap-1 text-muted text-xs shrink-0 ml-4">
                 <span>★</span>
                 <span>{repo.stars}</span>
               </div>

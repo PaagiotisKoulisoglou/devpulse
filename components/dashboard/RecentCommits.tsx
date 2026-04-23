@@ -20,25 +20,25 @@ interface Commit {
     }
   
     return (
-      <div className="rounded-xl border border-gray-800 bg-gray-900 p-6">
-        <h2 className="text-white font-semibold mb-4">Recent commits</h2>
-        <div className="flex flex-col divide-y divide-gray-800">
+      <div className="rounded-xl border border-border bg-background p-6">
+        <h2 className="text-foreground font-semibold mb-4">Recent commits</h2>
+        <div className="flex flex-col divide-y divide-border">
           {commits.length === 0 && (
-            <p className="text-gray-500 text-sm py-4">
+            <p className="text-muted text-sm py-4">
               No commits yet — sync your GitHub data
             </p>
           )}
           {commits.map((commit) => (
             <div key={commit.id} className="py-3 first:pt-0 last:pb-0">
-              <p className="text-gray-300 text-sm leading-snug line-clamp-2">
+              <p className="text-foreground text-sm leading-snug line-clamp-2">
                 {commit.message}
               </p>
               <div className="flex items-center gap-2 mt-1">
                 <span className="text-xs text-indigo-400 font-medium">
                   {commit.repos?.name}
                 </span>
-                <span className="text-gray-600 text-xs">·</span>
-                <span className="text-xs text-gray-500">
+                <span className="text-muted text-xs">·</span>
+                <span className="text-xs text-muted">
                   {timeAgo(commit.committed_at)}
                 </span>
               </div>

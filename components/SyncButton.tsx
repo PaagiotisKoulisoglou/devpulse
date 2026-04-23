@@ -4,31 +4,47 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 export default function SyncButton() {
-  const [syncing, setSyncing] = useState(false)
+  const [state, setState] = useState<'idle' | 'syncing' | 'done' | 'error'>('idle')
   const router = useRouter()
 
   async function handleSync() {
-    setSyncing(true)
+    setState('syncing')
 
     try {
       const res = await fetch('/api/sync', { method: 'POST' })
       if (!res.ok) throw new Error('Sync failed')
 
+      setState('done')
       router.refresh()
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setSyncing(false)
+
+      setTimeout(() => setState('idle'), 2000)
+    } catch {
+      setState('error')
+      setTimeout(() => setState('idle'), 3000)
     }
+  }
+
+  const labels = {
+    idle: 'Sync GitHub',
+    syncing: 'Syncing...',
+    done: '✓ Synced',
+    error: 'Failed — retry?',
+  }
+
+  const styles = {
+    idle: 'bg-indigo-600 hover:bg-indigo-500',
+    syncing: 'bg-indigo-600 opacity-50 cursor-not-allowed',
+    done: 'bg-green-600',
+    error: 'bg-red-600 hover:bg-red-500',
   }
 
   return (
     <button
       onClick={handleSync}
-      disabled={syncing}
-      className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      disabled={state === 'syncing'}
+      className={`rounded-lg px-4 py-2 text-sm font-medium text-white transition-all duration-200 ${styles[state]}`}
     >
-      {syncing ? 'Syncing...' : 'Sync GitHub'}
+      {labels[state]}
     </button>
   )
 }
