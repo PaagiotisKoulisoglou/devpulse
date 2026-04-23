@@ -10,16 +10,8 @@ export async function POST(request: Request) {
   const { messages } = await request.json()
 
   const [profileResult, reposResult, commitsResult] = await Promise.all([
-    supabase
-      .from('users')
-      .select('github_username')
-      .eq('id', user.id)
-      .single(),
-    supabase
-      .from('repos')
-      .select('name, language')
-      .eq('user_id', user.id)
-      .limit(10),
+    supabase.from('users').select('github_username').eq('id', user.id).single(),
+    supabase.from('repos').select('name, language').eq('user_id', user.id).limit(10),
     supabase
       .from('commits')
       .select('message, committed_at, repos(name)')
@@ -61,21 +53,17 @@ When asked general coding questions, answer from your knowledge as a senior deve
     stream: true,
     messages: [
       { role: 'system', content: systemPrompt },
-      ...messages, 
+      ...messages,
     ],
   })
 
   const readable = new ReadableStream({
     async start(controller) {
       const encoder = new TextEncoder()
-
       for await (const chunk of stream) {
         const text = chunk.choices[0]?.delta?.content ?? ''
-        if (text) {
-          controller.enqueue(encoder.encode(text))
-        }
+        if (text) controller.enqueue(encoder.encode(text))
       }
-
       controller.close()
     },
   })

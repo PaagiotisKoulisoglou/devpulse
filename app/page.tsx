@@ -1,8 +1,8 @@
-export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-background">
-      <h1 className="text-4xl font-bold text-foreground">DevPulse</h1>
-      <p className="mt-4 text-muted">Your AI developer dashboard</p>
-    </main>
-  )
+import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
+export default async function Home() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (user) redirect('/dashboard')
+  redirect('/login')
 }

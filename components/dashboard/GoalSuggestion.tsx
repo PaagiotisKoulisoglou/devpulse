@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
 
 interface Goal {
   title: string
@@ -38,19 +37,26 @@ export default function GoalSuggestions() {
     setSaving(index)
 
     try {
-      const supabase = createClient()
-
-      const targetDate = new Date()
-      targetDate.setDate(targetDate.getDate() + goal.target_days)
-
-      await supabase.from('goals').insert({
-        title: goal.title,
-        target_date: targetDate.toISOString().split('T')[0],
+      const res = await fetch('/api/goals/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: goal.title,
+          target_days: goal.target_days,
+        }),
       })
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data?.error ?? 'Failed to save goal')
+      }
 
       router.refresh()
     } catch (err) {
       console.error('Failed to save goal:', err)
+      if (err instanceof Error) {
+        window.alert(err.message)
+      }
     } finally {
       setSaving(null)
     }
