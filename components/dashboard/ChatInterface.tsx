@@ -225,13 +225,13 @@ export default function ChatInterface({
   const messagesLeft = MAX_MESSAGES - messages.length
 
   return (
-    <div className="flex h-[520px] flex-col rounded-xl border border-gray-800 bg-gray-900">
+    <div className="flex h-[520px] flex-col rounded-xl border border-border bg-background">
 
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-gray-800 px-6 py-4">
+      <div className="flex items-center justify-between border-b border-border px-6 py-4">
         <div>
-          <h2 className="font-semibold text-white">Chat with DevPulse AI</h2>
-          <p className="mt-0.5 text-xs text-gray-500">
+          <h2 className="font-semibold text-foreground">Chat with DevPulse AI</h2>
+          <p className="mt-0.5 text-xs text-muted">
             Quick coaching sessions · auto-clears after 30min
           </p>
         </div>
@@ -240,7 +240,7 @@ export default function ChatInterface({
           {/* Countdown timer */}
           {timeLeft !== null && timeLeft > 0 && (
             <div className={`text-xs font-mono tabular-nums ${
-              timeLeft < 300 ? 'text-red-400' : 'text-gray-500'
+              timeLeft < 300 ? 'text-red-500 dark:text-red-400' : 'text-muted'
             }`}>
               {formatTime(timeLeft)}
             </div>
@@ -248,7 +248,7 @@ export default function ChatInterface({
 
           {/* Messages remaining */}
           {messages.length > 0 && !limitReached && (
-            <div className="text-xs text-gray-600">
+            <div className="text-xs text-muted">
               {messagesLeft} left
             </div>
           )}
@@ -258,7 +258,7 @@ export default function ChatInterface({
             <button
               onClick={startNewChat}
               disabled={clearing}
-              className="rounded-lg border border-gray-700 px-3 py-1.5 text-xs text-gray-400 hover:border-gray-600 hover:text-white transition-colors disabled:opacity-50"
+              className="rounded-lg border border-border px-3 py-1.5 text-xs text-muted transition-colors hover:bg-foreground/10 hover:text-foreground disabled:opacity-50"
             >
               {clearing ? 'Clearing...' : 'New chat'}
             </button>
@@ -272,13 +272,13 @@ export default function ChatInterface({
         {/* Empty state */}
         {messages.length === 0 && (
           <div className="flex flex-1 flex-col items-center justify-center gap-4">
-            <p className="text-sm text-gray-400">Ask me about your code</p>
+            <p className="text-sm text-muted">Ask me about your code</p>
             <div className="flex flex-col gap-2 w-full max-w-xs">
               {STARTER_QUESTIONS.map((q) => (
                 <button
                   key={q}
                   onClick={() => setInput(q)}
-                  className="rounded-lg border border-gray-700 px-3 py-2 text-left text-xs text-indigo-400 hover:border-gray-600 hover:text-indigo-300 transition-colors"
+                  className="rounded-lg border border-border px-3 py-2 text-left text-xs text-indigo-600 transition-colors hover:bg-foreground/5 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
                 >
                   {q}
                 </button>
@@ -297,11 +297,11 @@ export default function ChatInterface({
               className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
                 msg.role === 'user'
                   ? 'rounded-br-sm bg-indigo-600 text-white'
-                  : 'rounded-bl-sm bg-gray-800 text-gray-300'
+                  : 'rounded-bl-sm bg-foreground/10 text-foreground'
               }`}
             >
               {msg.content || (
-                <span className="inline-block h-4 w-0.5 animate-pulse bg-gray-400" />
+                <span className="inline-block h-4 w-0.5 animate-pulse bg-muted" />
               )}
             </div>
           </div>
@@ -309,11 +309,11 @@ export default function ChatInterface({
 
         {/* Limit reached banner */}
         {limitReached && (
-          <div className="rounded-xl border border-gray-700 bg-gray-800 px-4 py-3 text-center">
-            <p className="text-sm text-gray-300 font-medium">
+          <div className="rounded-xl border border-border bg-foreground/5 px-4 py-3 text-center">
+            <p className="text-sm text-foreground font-medium">
               Session limit reached
             </p>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="mt-1 text-xs text-muted">
               Start a new chat to keep talking
             </p>
             <button
@@ -329,9 +329,9 @@ export default function ChatInterface({
       </div>
 
       {/* Input */}
-      <div className="border-t border-gray-800 px-4 py-4">
+      <div className="border-t border-border px-4 py-4">
         {limitReached ? (
-          <p className="text-center text-xs text-gray-500 py-1">
+          <p className="py-1 text-center text-xs text-muted">
             Start a new chat to continue
           </p>
         ) : (
@@ -344,7 +344,7 @@ export default function ChatInterface({
                 placeholder="Ask about your coding habits..."
                 rows={1}
                 disabled={streaming}
-                className="flex-1 resize-none rounded-xl border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white placeholder-gray-500 focus:border-indigo-500 focus:outline-none disabled:opacity-50"
+                className="flex-1 resize-none rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-indigo-500 focus:outline-none disabled:opacity-50"
               />
               <button
                 onClick={send}
@@ -354,7 +354,7 @@ export default function ChatInterface({
                 {streaming ? '...' : 'Send'}
               </button>
             </div>
-            <p className="mt-2 text-xs text-gray-600">
+            <p className="mt-2 text-xs text-muted">
               Enter to send · Shift+Enter for newline · sessions auto-clear after 30min inactivity
             </p>
           </>
