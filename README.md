@@ -1,36 +1,170 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DevPulse
+
+DevPulse is an AI-powered developer dashboard that connects to your GitHub account, syncs your activity, and gives you personalized coaching insights, goals, and chat guidance.
+
+## Features
+
+- GitHub OAuth login via Supabase Auth
+- One-click GitHub sync for repos and recent commits
+- Developer activity dashboard with:
+  - commit streaks
+  - language insights
+  - activity heatmap
+  - recent commits
+  - repository overview
+- AI coaching summary generated from your real GitHub activity
+- AI-generated goal suggestions plus saved goals management
+- AI chat coach with session history and auto-expiry
+- Light/dark theme toggle
+- PWA support (installable app in production)
+
+## Tech Stack
+
+- **Framework:** Next.js (App Router), React, TypeScript
+- **Styling:** Tailwind CSS, shadcn-style UI patterns
+- **Auth & Database:** Supabase (`@supabase/ssr`, `@supabase/supabase-js`)
+- **AI:** Groq SDK (`llama-3.3-70b-versatile`)
+- **Charts/visuals:** Recharts
+- **PWA:** `next-pwa`
+
+## Project Structure
+
+```text
+app/
+  api/
+    chat/         # chat generation + save/clear
+    goals/        # goal generation + save/delete
+    summary/      # AI coaching summary
+    sync/         # GitHub data sync
+  auth/callback/  # OAuth callback
+  dashboard/      # main authenticated dashboard
+  login/          # sign-in screen
+
+components/
+  dashboard/      # dashboard cards/widgets
+  ThemeProvider.tsx
+  ThemeToggle.tsx
+  SyncButton.tsx
+  InstallPrompt.tsx
+
+lib/
+  supabase/       # browser/server Supabase clients
+  github.ts       # GitHub API helpers
+  groq.ts         # Groq client + model
+  stats.ts        # local computed stats
+```
+
+## Environment Variables
+
+Create a `.env.local` file in the project root:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+GROQ_API_KEY=your_groq_api_key
+```
+
+## Supabase Setup (Required)
+
+You need these tables (minimum fields inferred from the app code):
+
+### `users`
+- `id` (uuid, primary key, matches auth user id)
+- `email` (text)
+- `github_username` (text)
+- `github_token` (text)
+- `avatar_url` (text)
+
+### `repos`
+- `id` (uuid, primary key)
+- `user_id` (uuid, fk -> users.id)
+- `github_id` (bigint/int, unique)
+- `name` (text)
+- `language` (text)
+- `stars` (int)
+- `last_pushed_at` (timestamp)
+
+### `commits`
+- `id` (uuid, primary key)
+- `user_id` (uuid, fk -> users.id)
+- `repo_id` (uuid, fk -> repos.id)
+- `message` (text)
+- `committed_at` (timestamp)
+
+### `goals`
+- `id` (uuid, primary key)
+- `user_id` (uuid, fk -> users.id)
+- `title` (text)
+- `target_date` (date)
+- `completed` (boolean, default false)
+
+### `chat_messages`
+- `id` (uuid, primary key)
+- `user_id` (uuid, fk -> users.id)
+- `role` (text: `user` or `assistant`)
+- `content` (text)
+- `session_id` (text/uuid)
+- `expires_at` (timestamp)
+- `created_at` (timestamp default now)
+
+Also enable GitHub as an OAuth provider in Supabase Auth and configure redirect URL:
+
+- `http://localhost:3000/auth/callback` (local)
+- your production callback URL
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Available Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `npm run dev` - start dev server
+- `npm run build` - build production app
+- `npm run start` - run production server
+- `npm run lint` - run ESLint
 
-## Learn More
+## Core API Routes
 
-To learn more about Next.js, take a look at the following resources:
+- `POST /api/sync`  
+  Sync GitHub repos and recent commits into Supabase.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `POST /api/summary`  
+  Stream AI-written coaching summary from your activity.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `POST /api/goals`  
+  Generate personalized goals with AI.
 
-## Deploy on Vercel
+- `POST /api/goals/save`  
+  Save a goal (with validation for duplicates and max active goals).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `POST /api/goals/delete`  
+  Delete a saved goal.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `POST /api/chat`  
+  Stream AI chat responses with user context.
+
+- `POST /api/chat/save`  
+  Persist chat messages and update session expiry.
+
+- `POST /api/chat/clear`  
+  Clear chat session messages.
+
+## Notes
+
+- PWA is enabled in production and disabled in development.
+- Chat sessions currently auto-expire after 30 minutes of inactivity.
+- The dashboard route requires an authenticated Supabase user.
+
+## Deployment
+
+Deploy to any Next.js-compatible platform (for example, Vercel).  
+Make sure production environment variables and Supabase OAuth redirect URLs are configured.
+
+## License
+
+Private project.

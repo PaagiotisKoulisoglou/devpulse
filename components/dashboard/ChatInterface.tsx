@@ -21,12 +21,10 @@ const STARTER_QUESTIONS = [
   'How can I build a better coding streak?',
 ]
 
-// Generate a random UUID for new sessions
 function generateSessionId(): string {
   return crypto.randomUUID()
 }
 
-// Format seconds into mm:ss
 function formatTime(seconds: number): string {
   const m = Math.floor(seconds / 60)
   const s = seconds % 60
@@ -52,7 +50,6 @@ export default function ChatInterface({
   const bottomRef = useRef<HTMLDivElement>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
-  // Calculate initial time left from server-provided expiry
   useEffect(() => {
     if (initialExpiresAt && initialMessages.length > 0) {
       const secondsLeft = Math.floor(
@@ -62,14 +59,12 @@ export default function ChatInterface({
     }
   }, [initialExpiresAt, initialMessages.length])
 
-  // Countdown timer — ticks every second
   useEffect(() => {
     if (timeLeft === null || timeLeft <= 0) return
 
     timerRef.current = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev === null || prev <= 1) {
-          // Session expired — clear everything
           setMessages([])
           setSessionId(generateSessionId())
           setLimitReached(false)
@@ -84,12 +79,10 @@ export default function ChatInterface({
     }
   }, [timeLeft])
 
-  // Auto-scroll to bottom on new messages
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  // Reset the 30-minute countdown
   function resetTimer() {
     if (timerRef.current) clearInterval(timerRef.current)
     setTimeLeft(30 * 60)
@@ -100,7 +93,6 @@ export default function ChatInterface({
     setClearing(true)
 
     try {
-      // Delete the current session from the database
       await fetch('/api/chat/clear', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -110,7 +102,6 @@ export default function ChatInterface({
       console.error('Failed to clear session:', err)
     }
 
-    // Reset all state
     setMessages([])
     setSessionId(generateSessionId())
     setLimitReached(false)
@@ -131,11 +122,9 @@ export default function ChatInterface({
     setInput('')
     setStreaming(true)
 
-    // Add empty assistant bubble immediately
     setMessages((prev) => [...prev, { role: 'assistant', content: '' }])
 
     try {
-      // Stream the response
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -165,7 +154,6 @@ export default function ChatInterface({
         })
       }
 
-      // Save both messages — server checks limit and refreshes expiry
       const [userSave, assistantSave] = await Promise.all([
         fetch('/api/chat/save', {
           method: 'POST',
@@ -187,16 +175,13 @@ export default function ChatInterface({
         }),
       ])
 
-      // Check if limit was hit
       const saveData = await assistantSave.json()
       if (saveData.limitReached) {
         setLimitReached(true)
       }
 
-      // Reset inactivity timer on every successful exchange
       resetTimer()
 
-      // Check if we've hit the UI limit
       if (history.length + 1 >= MAX_MESSAGES) {
         setLimitReached(true)
       }
@@ -227,7 +212,6 @@ export default function ChatInterface({
   return (
     <div className="flex h-[520px] flex-col rounded-xl border border-border bg-background">
 
-      {/* Header */}
       <div className="flex items-center justify-between border-b border-border px-6 py-4">
         <div>
           <h2 className="font-semibold text-foreground">Chat with DevPulse AI</h2>
@@ -237,7 +221,6 @@ export default function ChatInterface({
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Countdown timer */}
           {timeLeft !== null && timeLeft > 0 && (
             <div className={`text-xs font-mono tabular-nums ${
               timeLeft < 300 ? 'text-red-500 dark:text-red-400' : 'text-muted'
@@ -253,7 +236,6 @@ export default function ChatInterface({
             </div>
           )}
 
-          {/* New chat button */}
           {messages.length > 0 && (
             <button
               onClick={startNewChat}
@@ -266,10 +248,8 @@ export default function ChatInterface({
         </div>
       </div>
 
-      {/* Messages */}
       <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-6 py-4">
 
-        {/* Empty state */}
         {messages.length === 0 && (
           <div className="flex flex-1 flex-col items-center justify-center gap-4">
             <p className="text-sm text-muted">Ask me about your code</p>
@@ -328,7 +308,6 @@ export default function ChatInterface({
         <div ref={bottomRef} />
       </div>
 
-      {/* Input */}
       <div className="border-t border-border px-4 py-4">
         {limitReached ? (
           <p className="py-1 text-center text-xs text-muted">
