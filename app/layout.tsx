@@ -3,6 +3,8 @@ import { Inter } from 'next/font/google'
 import { ThemeProvider } from '@/components/ThemeProvider'
 import './globals.css'
 import InstallPrompt from '@/components/InstallPrompt'
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -39,6 +41,8 @@ export default function RootLayout({
         <ThemeProvider>
           {children}
           <InstallPrompt />
+          <Analytics />
+          <SpeedInsights />
         </ThemeProvider>
       </body>
     </html>
